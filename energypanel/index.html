@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Energy Panel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.plot.ly/plotly-3.1.1.min.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'vion-dark': '#0a0b0d',
+                        'vion-slate': '#1a1d23',
+                        'vion-gray': '#2a2f36',
+                        'vion-blue': '#00d4ff',
+                        'vion-green': '#00ff88',
+                        'vion-orange': '#ff6b35'
+                    },
+                    fontFamily: {
+                        'orbitron': ['Orbitron', 'sans-serif'],
+                        'inter': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        ::-webkit-scrollbar { display: none;}
+        .breathing {
+            animation: breathing 3s ease-in-out infinite;
+        }
+        @keyframes breathing {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+        .slide-up {
+            animation: slideUp 0.5s ease-out;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .efficiency-glow {
+            filter: drop-shadow(0 0 15px rgba(0, 255, 136, 0.4));
+        }
+        .pulse-dot {
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+        @keyframes pulse-dot {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+        }
+    </style>
+</head>
+<body class="bg-vion-dark text-white font-inter overflow-hidden">
+
+<div id="main-energy-panel" class="h-screen w-screen flex relative">
+    
+    <!-- Left Navigation Panel -->
+    <div id="left-nav-panel" class="w-80 bg-gradient-to-b from-vion-slate to-vion-gray p-6 flex flex-col justify-between">
+        
+        <div id="nav-header" class="space-y-6">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-orbitron font-medium text-gray-300">VION</h2>
+                <div class="w-3 h-3 bg-vion-green rounded-full breathing"></div>
+            </div>
+            
+            <div id="nav-menu" class="space-y-3">
+                <button class="w-full bg-vion-dark/50 rounded-xl p-4 hover:bg-vion-blue/20 transition-colors flex items-center justify-between">
+                    <div class="flex items-center">
+                        <i class="fa-solid fa-gauge-high text-vion-blue mr-3"></i>
+                        <span class="text-sm font-medium">Dashboard</span>
+                    </div>
+                </button>
+                
+                <button class="w-full bg-vion-blue/20 border-l-4 border-vion-blue rounded-xl p-4 flex items-center justify-between">
+                    <div class="flex items-center">
+                        <i class="fa-solid fa-bolt text-vion-blue mr-3"></i>
+                        <span class="text-sm font-medium text-vion-blue">Energy Panel</span>
+                    </div>
+                    <i class="fa-solid fa-chevron-right text-vion-blue text-xs"></i>
+                </button>
+                
+                <button class="w-full bg-vion-dark/50 rounded-xl p-4 hover:bg-vion-green/20 transition-colors flex items-center justify-between">
+                    <div class="flex items-center">
+                        <i class="fa-solid fa-route text-vion-green mr-3"></i>
+                        <span class="text-sm font-medium">Navigation</span>
+                    </div>
+                </button>
+                
+                <button class="w-full bg-vion-dark/50 rounded-xl p-4 hover:bg-vion-orange/20 transition-colors flex items-center justify-between">
+                    <div class="flex items-center">
+                        <i class="fa-solid fa-car text-vion-orange mr-3"></i>
+                        <span class="text-sm font-medium">Drive Mode</span>
+                    </div>
+                </button>
+            </div>
+
+            <div id="current-stats" class="bg-vion-dark/50 rounded-2xl p-5 slide-up">
+                <div class="text-xs text-gray-400 mb-3">CURRENT STATUS</div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-sm text-gray-400">Speed</span>
+                    <span class="text-lg font-orbitron font-bold text-white">65 km/h</span>
+                </div>
+                <div class="flex items-center justify-between mb-3">
+                    <span class="text-sm text-gray-400">Battery</span>
+                    <span class="text-lg font-orbitron font-bold text-vion-green">87%</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <span class="text-sm text-gray-400">Range</span>
+                    <span class="text-lg font-orbitron font-bold text-vion-blue">342 km</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="system-info" class="space-y-3">
+            <div class="flex items-center justify-between text-sm">
+                <span class="text-gray-400">All systems</span>
+                <span class="text-vion-green flex items-center">
+                    <i class="fa-solid fa-circle-check mr-2"></i>
+                    Ready
+                </span>
+            </div>
+            <div class="text-xs text-gray-500">Last updated: 14:32</div>
+        </div>
+    </div>
+
+    <!-- Central Energy Display -->
+    <div id="energy-display" class="flex-1 p-8 overflow-y-auto">
+        
+        <div id="energy-header" class="mb-8">
+            <h1 class="text-3xl font-orbitron font-bold text-white mb-2">Energy Management</h1>
+            <p class="text-gray-400">Real-time battery consumption and regeneration analytics</p>
+        </div>
+
+        <!-- Efficiency Rating Card -->
+        <div id="efficiency-rating" class="bg-gradient-to-br from-vion-slate to-vion-gray rounded-3xl p-8 mb-6 slide-up">
+            <div class="flex items-center justify-between">
+                <div class="flex-1">
+                    <div class="text-sm font-medium text-gray-400 mb-3">EFFICIENCY RATING</div>
+                    <div class="flex items-end mb-4">
+                        <div class="text-7xl font-orbitron font-black text-vion-green efficiency-glow mr-4">A+</div>
+                        <div class="mb-3">
+                            <div class="text-2xl font-orbitron font-bold text-white">Excellent</div>
+                            <div class="text-sm text-gray-400">Top 5% of drivers</div>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <div class="flex-1 bg-vion-gray rounded-full h-3">
+                            <div class="bg-gradient-to-r from-vion-green to-vion-blue h-3 rounded-full" style="width: 94%"></div>
+                        </div>
+                        <span class="text-sm font-orbitron font-bold text-vion-green">94%</span>
+                    </div>
+                </div>
+                <div class="w-40 h-40 bg-vion-dark/50 rounded-full flex items-center justify-center ml-8">
+                    <i class="fa-solid fa-leaf text-6xl text-vion-green pulse-dot"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6 mb-6">
+            
+            <!-- Live Consumption Card -->
+            <div id="live-consumption" class="bg-gradient-to-br from-vion-slate to-vion-gray rounded-3xl p-6 slide-up">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-sm font-medium text-gray-400">LIVE CONSUMPTION</div>
+                    <div class="w-2 h-2 bg-vion-orange rounded-full pulse-dot"></div>
+                </div>
+                <div class="flex items-end mb-6">
+                    <div class="text-5xl font-orbitron font-bold text-white mr-3">12.4</div>
+                    <div class="text-xl text-gray-400 mb-2">kWh/100km</div>
+                </div>
+                <div id="consumption-chart" style="height: 200px;" class="mb-4"></div>
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-gray-400">Avg. last 50km</span>
+                    <span class="text-vion-blue font-medium">13.2 kWh/100km</span>
+                </div>
+            </div>
+
+            <!-- Regen Braking Card -->
+            <div id="regen-braking" class="bg-gradient-to-br from-vion-slate to-vion-gray rounded-3xl p-6 slide-up">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-sm font-medium text-gray-400">REGENERATIVE BRAKING</div>
+                    <i class="fa-solid fa-rotate-left text-vion-green"></i>
+                </div>
+                <div class="flex items-end mb-6">
+                    <div class="text-5xl font-orbitron font-bold text-vion-green mr-3">+8.3</div>
+                    <div class="text-xl text-gray-400 mb-2">kWh recovered</div>
+                </div>
+                <div id="regen-chart" style="height: 200px;" class="mb-4"></div>
+                <div class="flex items-center justify-between text-sm">
+                    <span class="text-gray-400">Today's total</span>
+                    <span class="text-vion-green font-medium">+12 km range</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Energy Flow Visualization -->
+        <div id="energy-flow" class="bg-gradient-to-br from-vion-slate to-vion-gray rounded-3xl p-8 mb-6 slide-up">
+            <div class="text-sm font-medium text-gray-400 mb-6">ENERGY FLOW</div>
+            <div id="energy-flow-chart" style="height: 300px;"></div>
+        </div>
+
+        <div class="grid grid-cols-3 gap-6">
+            
+            <!-- Battery Health -->
+            <div id="battery-health" class="bg-gradient-to-br from-vion-slate to-vion-gray rounded-3xl p-6 slide-up">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-sm font-medium text-gray-400">BATTERY HEALTH</div>
+                    <i class="fa-solid fa-heart-pulse text-vion-green"></i>
+                </div>
+                <div class="text-4xl font-orbitron font-bold text-white mb-2">98%</div>
+                <div class="text-sm text-gray-400 mb-4">Excellent condition</div>
+                <div class="w-full bg-vion-gray rounded-full h-2">
+                    <div class="bg-vion-green h-2 rounded-full" style="width: 98%"></div>
+                </div>
+                <div class="text-xs text-gray-500 mt-3">Next service: 8,400 km</div>
+            </div>
+
+            <!-- Temperature -->
+            <div id="battery-temp" class="bg-gradient-to-br from-vion-slate to-vion-gray rounded-3xl p-6 slide-up">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-sm font-medium text-gray-400">TEMPERATURE</div>
+                    <i class="fa-solid fa-temperature-half text-vion-blue"></i>
+                </div>
+                <div class="text-4xl font-orbitron font-bold text-white mb-2">24°C</div>
+                <div class="text-sm text-gray-400 mb-4">Optimal range</div>
+                <div class="flex justify-between text-xs text-gray-500">
+                    <span>Min: 22°C</span>
+                    <span>Max: 26°C</span>
+                </div>
+                <div class="mt-3 text-xs text-vion-green">Perfect conditions</div>
+            </div>
+
+            <!-- Charging Stats -->
+            <div id="charging-stats" class="bg-gradient-to-br from-vion-slate to-vion-gray rounded-3xl p-6 slide-up">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-sm font-medium text-gray-400">LAST CHARGE</div>
+                    <i class="fa-solid fa-charging-station text-vion-blue"></i>
+                </div>
+                <div class="text-4xl font-orbitron font-bold text-white mb-2">42min</div>
+                <div class="text-sm text-gray-400 mb-4">20% → 80%</div>
+                <div class="text-xs text-gray-500">Fast charging</div>
+                <div class="mt-3 text-xs text-vion-blue">Next: 280 km</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Info Panel -->
+    <div id="right-info-panel" class="w-80 bg-gradient-to-b from-vion-slate to-vion-gray p-6 flex flex-col justify-between">
+        
+        <div id="tips-section" class="space-y-6">
+            <div class="flex items-center justify-between">
+                <h2 class="text-lg font-orbitron font-medium text-gray-300">INSIGHTS</h2>
+                <i class="fa-solid fa-lightbulb text-vion-green text-lg"></i>
+            </div>
+
+            <!-- Eco Tips -->
+            <div id="eco-tips" class="bg-vion-dark/50 rounded-2xl p-5 slide-up">
+                <div class="flex items-start mb-3">
+                    <div class="w-10 h-10 bg-vion-green/20 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                        <i class="fa-solid fa-leaf text-vion-green"></i>
+                    </div>
+                    <div>
+                        <div class="text-sm font-medium text-white mb-1">Smooth Acceleration</div>
+                        <div class="text-xs text-gray-400">You saved 3.2 kWh today with gentle driving</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="regen-tip" class="bg-vion-dark/50 rounded-2xl p-5 slide-up">
+                <div class="flex items-start mb-3">
+                    <div class="w-10 h-10 bg-vion-blue/20 rounded-lg flex items-center justify-center mr-3 flex-shrink-0">
+                        <i class="fa-solid fa-arrow-rotate-left text-vion-blue"></i>
+                    </div>
+                    <div>
+                        <div class="text-sm font-medium text-white mb-1">Great Regen Usage</div>
+                        <div class="text-xs text-gray-400">Extended range by 12 km through braking</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Range Prediction -->
+            <div id="range-prediction" class="bg-gradient-to-br from-vion-blue/10 to-transparent border-l-4 border-vion-blue rounded-r-2xl p-5 slide-up">
+                <div class="text-sm font-medium text-gray-400 mb-3">RANGE PREDICTION</div>
+                <div class="space-y-2">
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-400">Current pace</span>
+                        <span class="text-white font-medium">342 km</span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-400">Eco mode</span>
+                        <span class="text-vion-green font-medium">398 km</span>
+                    </div>
+                    <div class="flex items-center justify-between text-sm">
+                        <span class="text-gray-400">Sport mode</span>
+                        <span class="text-vion-orange font-medium">287 km</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Trip Summary -->
+            <div id="trip-summary" class="bg-vion-dark/50 rounded-2xl p-5 slide-up">
+                <div class="text-sm font-medium text-gray-400 mb-4">TODAY'S TRIP</div>
+                <div class="space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-400">Distance</span>
+                        <span class="text-white font-medium">47.3 km</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-400">Energy used</span>
+                        <span class="text-white font-medium">6.2 kWh</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-400">Recovered</span>
+                        <span class="text-vion-green font-medium">+0.8 kWh</span>
+                    </div>
+                    <div class="flex items-center justify-between pt-3 border-t border-vion-gray">
+                        <span class="text-sm text-gray-400">Net efficiency</span>
+                        <span class="text-vion-green font-orbitron font-bold">11.4 kWh</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="quick-actions" class="space-y-4">
+            <div class="grid grid-cols-3 gap-3">
+                <button class="bg-vion-dark/50 rounded-xl p-3 hover:bg-vion-blue/20 transition-colors">
+                    <i class="fa-solid fa-home text-vion-blue text-lg"></i>
+                </button>
+                <button class="bg-vion-dark/50 rounded-xl p-3 hover:bg-vion-green/20 transition-colors">
+                    <i class="fa-solid fa-phone text-vion-green text-lg"></i>
+                </button>
+                <button class="bg-vion-dark/50 rounded-xl p-3 hover:bg-vion-orange/20 transition-colors">
+                    <i class="fa-solid fa-cog text-vion-orange text-lg"></i>
+                </button>
+            </div>
+            <div class="text-xs text-gray-500 text-center">Voice: "Hey Vion"</div>
+        </div>
+    </div>
+
+    <!-- Ambient Lighting Effects -->
+    <div class="absolute inset-0 pointer-events-none">
+        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-vion-green to-transparent opacity-30"></div>
+        <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-vion-blue to-transparent opacity-30"></div>
+    </div>
+</div>
+
+<script>
+window.addEventListener('load', function() {
+    try {
+        // Consumption Chart
+        const consumptionData = [{
+            type: 'scatter',
+            mode: 'lines',
+            x: ['10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30'],
+            y: [14.2, 13.8, 12.9, 13.5, 12.1, 11.8, 12.4, 12.0, 11.9, 12.4],
+            line: {
+                color: '#ff6b35',
+                width: 3
+            },
+            fill: 'tozeroy',
+            fillcolor: 'rgba(255, 107, 53, 0.1)'
+        }];
+
+        const consumptionLayout = {
+            margin: { t: 0, r: 0, b: 30, l: 40 },
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            xaxis: {
+                color: '#6b7280',
+                gridcolor: 'rgba(42, 47, 54, 0.3)',
+                showgrid: false
+            },
+            yaxis: {
+                color: '#6b7280',
+                gridcolor: 'rgba(42, 47, 54, 0.3)',
+                showgrid: true
+            },
+            showlegend: false
+        };
+
+        Plotly.newPlot('consumption-chart', consumptionData, consumptionLayout, {responsive: true, displayModeBar: false, displaylogo: false});
+
+        // Regen Chart
+        const regenData = [{
+            type: 'bar',
+            x: ['10:00', '10:30', '11:00', '11:30', '12:00', '12:30', '13:00', '13:30', '14:00', '14:30'],
+            y: [0.5, 0.8, 1.2, 0.9, 1.5, 0.7, 1.1, 0.6, 0.9, 1.1],
+            marker: {
+                color: '#00ff88'
+            }
+        }];
+
+        const regenLayout = {
+            margin: { t: 0, r: 0, b: 30, l: 40 },
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            xaxis: {
+                color: '#6b7280',
+                gridcolor: 'rgba(42, 47, 54, 0.3)',
+                showgrid: false
+            },
+            yaxis: {
+                color: '#6b7280',
+                gridcolor: 'rgba(42, 47, 54, 0.3)',
+                showgrid: true
+            },
+            showlegend: false
+        };
+
+        Plotly.newPlot('regen-chart', regenData, regenLayout, {responsive: true, displayModeBar: false, displaylogo: false});
+
+        // Energy Flow Chart
+        const energyFlowData = [
+            {
+                type: 'scatter',
+                mode: 'lines',
+                name: 'Consumption',
+                x: ['00:00', '02:00', '04:00', '06:00', '08:00', '10:00', '12:00', '14:00'],
+                y: [0, 0, 0, 2.1, 4.8, 5.9, 6.1, 6.2],
+                line: { color: '#ff6b35', width: 3 }
+            },
+            {
+                type: 'scatter',
+                mode: 'lines',
+                name: 'Recovery',
+                x: ['00:00', '02:00', '04:00', '06:00', '08:00', '10:00', '12:00', '14:00'],
+                y: [0, 0, 0, 0.2, 0.4, 0.6, 0.7, 0.8],
+                line: { color: '#00ff88', width: 3 }
+            }
+        ];
+
+        const energyFlowLayout = {
+            margin: { t: 20, r: 20, b: 40, l: 50 },
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            xaxis: {
+                color: '#6b7280',
+                gridcolor: 'rgba(42, 47, 54, 0.3)',
+                title: 'Time'
+            },
+            yaxis: {
+                color: '#6b7280',
+                gridcolor: 'rgba(42, 47, 54, 0.3)',
+                title: 'Energy (kWh)'
+            },
+            showlegend: true,
+            legend: {
+                x: 0.02,
+                y: 0.98,
+                bgcolor: 'rgba(26, 29, 35, 0.8)',
+                font: { color: '#ffffff' }
+            }
+        };
+
+        Plotly.newPlot('energy-flow-chart', energyFlowData, energyFlowLayout, {responsive: true, displayModeBar: false, displaylogo: false});
+
+    } catch(e) {
+        console.error('Chart error:', e);
+    }
+
+    // Real-time updates
+    setInterval(() => {
+        const consumption = document.querySelector('#live-consumption .text-5xl');
+        const current = parseFloat(consumption.textContent);
+        const newValue = Math.max(10, Math.min(15, current + (Math.random() - 0.5) * 0.3));
+        consumption.textContent = newValue.toFixed(1);
+    }, 3000);
+
+    setInterval(() => {
+        const regen = document.querySelector('#regen-braking .text-5xl');
+        const current = parseFloat(regen.textContent.replace('+', ''));
+        const newValue = Math.max(7, Math.min(10, current + (Math.random() - 0.5) * 0.2));
+        regen.textContent = '+' + newValue.toFixed(1);
+    }, 4000);
+});
+</script>
+
+</body>
+</html>
