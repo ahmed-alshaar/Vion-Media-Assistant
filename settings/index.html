@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'vion-dark': '#0a0b0d',
+                        'vion-slate': '#1a1d23',
+                        'vion-gray': '#2a2f36',
+                        'vion-blue': '#00d4ff',
+                        'vion-green': '#00ff88',
+                        'vion-orange': '#ff6b35'
+                    },
+                    fontFamily: {
+                        'orbitron': ['Orbitron', 'sans-serif'],
+                        'inter': ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        ::-webkit-scrollbar { display: none;}
+        .breathing {
+            animation: breathing 3s ease-in-out infinite;
+        }
+        @keyframes breathing {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 1; }
+        }
+        .slide-up {
+            animation: slideUp 0.5s ease-out;
+        }
+        @keyframes slideUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+        .rotary-knob {
+            transition: transform 0.2s ease;
+        }
+        .rotary-knob:hover {
+            transform: scale(1.05);
+        }
+        .temp-glow {
+            filter: drop-shadow(0 0 15px rgba(0, 212, 255, 0.4));
+        }
+        .control-active {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 255, 136, 0.1));
+            border: 1px solid rgba(0, 212, 255, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-vion-dark text-white font-inter overflow-hidden">
+
+<div id="settings-interface" class="h-screen w-screen flex relative">
+    
+    <!-- Left Touch Panel -->
+    <div id="left-touch-panel" class="w-1/2 bg-gradient-to-br from-vion-slate to-vion-gray p-8 flex flex-col">
+        
+        <!-- Header -->
+        <div id="settings-header" class="flex items-center justify-between mb-8">
+            <div class="flex items-center space-x-4">
+                <button id="back-btn" class="w-12 h-12 bg-vion-dark/50 rounded-xl flex items-center justify-center hover:bg-vion-blue/20 transition-colors">
+                    <i class="fa-solid fa-arrow-left text-vion-blue text-lg"></i>
+                </button>
+                <h1 class="text-2xl font-orbitron font-bold text-white">VEHICLE CONTROL</h1>
+            </div>
+            <div class="w-3 h-3 bg-vion-green rounded-full breathing"></div>
+        </div>
+
+        <!-- Climate Control Section -->
+        <div id="climate-section" class="mb-8 slide-up">
+            <div class="bg-vion-dark/50 rounded-3xl p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-lg font-orbitron font-medium text-gray-300">CLIMATE CONTROL</h2>
+                    <i class="fa-solid fa-snowflake text-vion-blue text-xl"></i>
+                </div>
+                
+                <!-- Temperature Display -->
+                <div class="text-center mb-8">
+                    <div id="temp-display" class="text-7xl font-orbitron font-black text-vion-blue temp-glow mb-2">22°</div>
+                    <div class="text-sm text-gray-400 tracking-wider">CABIN TEMPERATURE</div>
+                </div>
+
+                <!-- Temperature Controls -->
+                <div class="flex items-center justify-center space-x-8 mb-6">
+                    <button id="temp-down" class="w-16 h-16 bg-vion-gray rounded-2xl flex items-center justify-center hover:bg-red-500/20 transition-colors">
+                        <i class="fa-solid fa-minus text-red-400 text-xl"></i>
+                    </button>
+                    <div class="w-32 h-2 bg-vion-gray rounded-full relative">
+                        <div id="temp-slider" class="w-8 h-8 bg-vion-blue rounded-full absolute -top-3 left-1/2 transform -translate-x-1/2 cursor-pointer shadow-lg"></div>
+                    </div>
+                    <button id="temp-up" class="w-16 h-16 bg-vion-gray rounded-2xl flex items-center justify-center hover:bg-vion-orange/20 transition-colors">
+                        <i class="fa-solid fa-plus text-vion-orange text-xl"></i>
+                    </button>
+                </div>
+
+                <!-- Climate Modes -->
+                <div class="grid grid-cols-3 gap-3">
+                    <button class="bg-vion-gray rounded-xl p-4 hover:bg-vion-blue/20 transition-colors text-center">
+                        <i class="fa-solid fa-wind text-vion-blue text-lg mb-2 block"></i>
+                        <span class="text-xs">AUTO</span>
+                    </button>
+                    <button class="control-active rounded-xl p-4 text-center">
+                        <i class="fa-solid fa-sun text-vion-orange text-lg mb-2 block"></i>
+                        <span class="text-xs">HEAT</span>
+                    </button>
+                    <button class="bg-vion-gray rounded-xl p-4 hover:bg-vion-green/20 transition-colors text-center">
+                        <i class="fa-solid fa-leaf text-vion-green text-lg mb-2 block"></i>
+                        <span class="text-xs">ECO</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Seat Adjustment Section -->
+        <div id="seat-section" class="mb-8 slide-up">
+            <div class="bg-vion-dark/50 rounded-3xl p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-lg font-orbitron font-medium text-gray-300">SEAT ADJUSTMENT</h2>
+                    <i class="fa-solid fa-chair text-vion-green text-xl"></i>
+                </div>
+
+                <!-- Seat Controls Grid -->
+                <div class="grid grid-cols-2 gap-4">
+                    <!-- Driver Seat -->
+                    <div class="bg-vion-gray/50 rounded-2xl p-4">
+                        <h3 class="text-sm font-medium text-gray-400 mb-4">DRIVER</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-400">Height</span>
+                                <div class="flex space-x-2">
+                                    <button class="w-8 h-8 bg-vion-dark rounded-lg flex items-center justify-center">
+                                        <i class="fa-solid fa-arrow-down text-xs"></i>
+                                    </button>
+                                    <button class="w-8 h-8 bg-vion-dark rounded-lg flex items-center justify-center">
+                                        <i class="fa-solid fa-arrow-up text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-400">Recline</span>
+                                <div class="flex space-x-2">
+                                    <button class="w-8 h-8 bg-vion-dark rounded-lg flex items-center justify-center">
+                                        <i class="fa-solid fa-arrow-left text-xs"></i>
+                                    </button>
+                                    <button class="w-8 h-8 bg-vion-dark rounded-lg flex items-center justify-center">
+                                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Passenger Seat -->
+                    <div class="bg-vion-gray/50 rounded-2xl p-4">
+                        <h3 class="text-sm font-medium text-gray-400 mb-4">PASSENGER</h3>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-400">Height</span>
+                                <div class="flex space-x-2">
+                                    <button class="w-8 h-8 bg-vion-dark rounded-lg flex items-center justify-center">
+                                        <i class="fa-solid fa-arrow-down text-xs"></i>
+                                    </button>
+                                    <button class="w-8 h-8 bg-vion-dark rounded-lg flex items-center justify-center">
+                                        <i class="fa-solid fa-arrow-up text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs text-gray-400">Recline</span>
+                                <div class="flex space-x-2">
+                                    <button class="w-8 h-8 bg-vion-dark rounded-lg flex items-center justify-center">
+                                        <i class="fa-solid fa-arrow-left text-xs"></i>
+                                    </button>
+                                    <button class="w-8 h-8 bg-vion-dark rounded-lg flex items-center justify-center">
+                                        <i class="fa-solid fa-arrow-right text-xs"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Memory Presets -->
+                <div class="mt-6 flex justify-center space-x-3">
+                    <button class="control-active rounded-xl px-4 py-2 text-sm font-medium">
+                        M1
+                    </button>
+                    <button class="bg-vion-gray rounded-xl px-4 py-2 text-sm font-medium hover:bg-vion-blue/20 transition-colors">
+                        M2
+                    </button>
+                    <button class="bg-vion-gray rounded-xl px-4 py-2 text-sm font-medium hover:bg-vion-green/20 transition-colors">
+                        M3
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Right Rotary Panel -->
+    <div id="right-rotary-panel" class="w-1/2 bg-gradient-to-bl from-vion-slate to-vion-gray p-8 flex flex-col">
+        
+        <!-- System Updates Section -->
+        <div id="updates-section" class="mb-8 slide-up">
+            <div class="bg-vion-dark/50 rounded-3xl p-6">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-lg font-orbitron font-medium text-gray-300">SYSTEM UPDATES</h2>
+                    <i class="fa-solid fa-download text-vion-orange text-xl"></i>
+                </div>
+
+                <!-- Current Version -->
+                <div class="bg-vion-gray/50 rounded-2xl p-4 mb-6">
+                    <div class="flex items-center justify-between mb-3">
+                        <span class="text-sm font-medium text-gray-400">CURRENT VERSION</span>
+                        <span class="text-sm text-vion-green">LATEST</span>
+                    </div>
+                    <div class="text-xl font-orbitron font-bold text-white">v2.1.4</div>
+                    <div class="text-xs text-gray-400 mt-1">Released: Nov 2024</div>
+                </div>
+
+                <!-- Update Progress -->
+                <div class="space-y-4">
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-400">Navigation Maps</span>
+                        <span class="text-sm text-vion-green">Updated</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-400">Safety Systems</span>
+                        <span class="text-sm text-vion-green">Updated</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-gray-400">Battery Optimization</span>
+                        <span class="text-sm text-vion-orange">Available</span>
+                    </div>
+                </div>
+
+                <!-- Update Button -->
+                <button class="w-full mt-6 bg-gradient-to-r from-vion-blue to-vion-green rounded-2xl py-3 font-medium hover:shadow-lg transition-all">
+                    INSTALL UPDATES
+                </button>
+            </div>
+        </div>
+
+        <!-- Rotary Control Interface -->
+        <div id="rotary-interface" class="flex-1 flex items-center justify-center">
+            <div class="relative">
+                <!-- Rotary Knob Base -->
+                <div class="w-80 h-80 bg-gradient-to-br from-vion-gray to-vion-dark rounded-full border-4 border-vion-blue/30 flex items-center justify-center relative rotary-knob">
+                    
+                    <!-- Inner Circle -->
+                    <div class="w-64 h-64 bg-vion-dark rounded-full border-2 border-vion-blue/50 flex items-center justify-center relative">
+                        
+                        <!-- Center Display -->
+                        <div class="text-center">
+                            <div id="rotary-mode" class="text-lg font-orbitron font-bold text-vion-blue mb-2">CLIMATE</div>
+                            <div id="rotary-value" class="text-3xl font-orbitron font-black text-white">22°</div>
+                            <div class="text-sm text-gray-400 mt-2">Rotate to adjust</div>
+                        </div>
+
+                        <!-- Position Indicator -->
+                        <div class="absolute top-4 w-1 h-8 bg-vion-blue rounded-full"></div>
+                    </div>
+
+                    <!-- Mode Indicators -->
+                    <div class="absolute top-8 left-1/2 transform -translate-x-1/2 text-xs text-vion-blue font-medium">TEMP</div>
+                    <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-xs text-gray-500 font-medium">SEAT</div>
+                    <div class="absolute left-8 top-1/2 transform -translate-y-1/2 text-xs text-gray-500 font-medium rotate-90">AUDIO</div>
+                    <div class="absolute right-8 top-1/2 transform -translate-y-1/2 text-xs text-gray-500 font-medium -rotate-90">DRIVE</div>
+                </div>
+
+                <!-- Touch Zones -->
+                <button id="rotary-press" class="absolute inset-0 w-80 h-80 rounded-full bg-transparent"></button>
+            </div>
+        </div>
+
+        <!-- Quick Actions -->
+        <div id="quick-actions" class="grid grid-cols-4 gap-3 mt-8">
+            <button class="bg-vion-dark/50 rounded-xl p-4 hover:bg-vion-blue/20 transition-colors text-center">
+                <i class="fa-solid fa-home text-vion-blue text-lg mb-2 block"></i>
+                <span class="text-xs">HOME</span>
+            </button>
+            <button class="bg-vion-dark/50 rounded-xl p-4 hover:bg-vion-green/20 transition-colors text-center">
+                <i class="fa-solid fa-music text-vion-green text-lg mb-2 block"></i>
+                <span class="text-xs">MEDIA</span>
+            </button>
+            <button class="control-active rounded-xl p-4 text-center">
+                <i class="fa-solid fa-cog text-vion-orange text-lg mb-2 block"></i>
+                <span class="text-xs">SETTINGS</span>
+            </button>
+            <button class="bg-vion-dark/50 rounded-xl p-4 hover:bg-vion-blue/20 transition-colors text-center">
+                <i class="fa-solid fa-microphone text-vion-blue text-lg mb-2 block"></i>
+                <span class="text-xs">VOICE</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Ambient Lighting Effects -->
+    <div class="absolute inset-0 pointer-events-none">
+        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-vion-blue to-transparent opacity-30"></div>
+        <div class="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-vion-green to-transparent opacity-30"></div>
+        <div class="absolute left-1/2 top-0 w-1 h-full bg-gradient-to-b from-transparent via-vion-orange to-transparent opacity-20 transform -translate-x-1/2"></div>
+    </div>
+</div>
+
+<script>
+window.addEventListener('load', function() {
+    let currentTemp = 22;
+    let rotaryMode = 'climate';
+
+    // Temperature controls
+    document.getElementById('temp-up').addEventListener('click', function() {
+        if (currentTemp < 30) {
+            currentTemp++;
+            updateTempDisplay();
+        }
+    });
+
+    document.getElementById('temp-down').addEventListener('click', function() {
+        if (currentTemp > 16) {
+            currentTemp--;
+            updateTempDisplay();
+        }
+    });
+
+    function updateTempDisplay() {
+        document.getElementById('temp-display').textContent = currentTemp + '°';
+        if (rotaryMode === 'climate') {
+            document.getElementById('rotary-value').textContent = currentTemp + '°';
+        }
+    }
+
+    // Rotary knob simulation
+    let rotaryAngle = 0;
+    const rotaryKnob = document.querySelector('.rotary-knob');
+    
+    document.addEventListener('wheel', function(e) {
+        if (e.target.closest('#rotary-interface')) {
+            e.preventDefault();
+            rotaryAngle += e.deltaY > 0 ? 10 : -10;
+            rotaryKnob.style.transform = `rotate(${rotaryAngle}deg) scale(1.05)`;
+            
+            if (rotaryMode === 'climate') {
+                if (e.deltaY > 0 && currentTemp < 30) {
+                    currentTemp++;
+                } else if (e.deltaY < 0 && currentTemp > 16) {
+                    currentTemp--;
+                }
+                updateTempDisplay();
+            }
+        }
+    });
+
+    // Rotary mode switching
+    document.getElementById('rotary-press').addEventListener('click', function() {
+        const modes = ['climate', 'seat', 'audio', 'drive'];
+        const currentIndex = modes.indexOf(rotaryMode);
+        const nextIndex = (currentIndex + 1) % modes.length;
+        rotaryMode = modes[nextIndex];
+        
+        const modeDisplay = document.getElementById('rotary-mode');
+        const valueDisplay = document.getElementById('rotary-value');
+        
+        switch(rotaryMode) {
+            case 'climate':
+                modeDisplay.textContent = 'CLIMATE';
+                valueDisplay.textContent = currentTemp + '°';
+                break;
+            case 'seat':
+                modeDisplay.textContent = 'SEAT';
+                valueDisplay.textContent = 'M1';
+                break;
+            case 'audio':
+                modeDisplay.textContent = 'AUDIO';
+                valueDisplay.textContent = '65%';
+                break;
+            case 'drive':
+                modeDisplay.textContent = 'DRIVE';
+                valueDisplay.textContent = 'NORMAL';
+                break;
+        }
+    });
+
+    // Back button
+    document.getElementById('back-btn').addEventListener('click', function() {
+        window.history.back();
+    });
+
+    // Breathing animation for status indicator
+    setInterval(() => {
+        const statusDot = document.querySelector('.breathing');
+        statusDot.classList.toggle('breathing');
+        setTimeout(() => statusDot.classList.toggle('breathing'), 1500);
+    }, 3000);
+});
+</script>
+
+</body>
+</html>
